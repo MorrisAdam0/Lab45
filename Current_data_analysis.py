@@ -2,10 +2,10 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
-data = pd.read_csv('current_data.csv')
+data = pd.read_csv('current_data.csv') #Change the file name accordingly
 
 #adding column names to the data
-data.columns = ['Time (H:M:S:mS)', 'Current (I/uA)', 'Voltage (V)']
+data.columns = ['Time (H:M:S:mS)', 'Voltage (V)', 'Current (I/uA)', 'Solution']
 
 current = data['Current (I/uA)']
 volts = data['Voltage (V)']
@@ -95,6 +95,50 @@ def combo():
                 ax=0,
                 ay=-40
             )
+    #plotting a vertical line when there is a change in solution
+    solution = data['Solution']
+    for i in range(len(solution)):
+        #excluding the first value
+        if i == 0:
+            continue
+        if solution[i] != solution[i-1]:
+            condition = True
+        else:
+            condition = False
+
+        if condition == True:
+            fig.add_vline(x=time[i], line_width=3, line_dash="dash", line_color="orange")
+            fig.add_annotation(
+                x=time[i],
+                y=volts[i],
+                text="Solution: " + str(solution[i]),
+                showarrow=True,
+                arrowhead=1,
+                ax=0,
+                ay=-200
+            )
+    # adding a legend to the plot
+    fig.update_layout(legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="right",
+        x=0.01
+    ))
+    # adding the orange and green lines to the legend
+    fig.add_trace(go.Scatter(
+        x=[None],
+        y=[None],
+        mode='lines',
+        line=dict(color='green', width=3),
+        name='Voltage Change'
+    ))
+    fig.add_trace(go.Scatter(
+        x=[None],
+        y=[None],
+        mode='lines',
+        line=dict(color='orange', width=3),
+        name='Solution Change'
+    ))
 
     fig.show()
 
@@ -168,6 +212,51 @@ def I_vs_t():
                 ax=0,
                 ay=-40
             )
+
+    # plotting a vertical line when there is a change in solution
+    solution = data['Solution']
+    for i in range(len(solution)):
+        # excluding the first value
+        if i == 0:
+            continue
+        if solution[i] != solution[i - 1]:
+            condition = True
+        else:
+            condition = False
+
+        if condition == True:
+            fig2.add_vline(x=time[i], line_width=3, line_dash="dash", line_color="orange")
+            fig2.add_annotation(
+                x=time[i],
+                y=volts[i],
+                text="Solution: " + str(solution[i]),
+                showarrow=True,
+                arrowhead=1,
+                ax=0,
+                ay=-200
+            )
+    # adding a legend to the plot
+    fig2.update_layout(legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="right",
+        x=0.01
+    ))
+    # adding the orange and green lines to the legend
+    fig2.add_trace(go.Scatter(
+        x=[None],
+        y=[None],
+        mode='lines',
+        line=dict(color='green', width=3),
+        name='Voltage Change'
+    ))
+    fig2.add_trace(go.Scatter(
+        x=[None],
+        y=[None],
+        mode='lines',
+        line=dict(color='orange', width=3),
+        name='Solution Change'
+    ))
     fig2.show()
 
 
@@ -242,6 +331,50 @@ def V_vs_t():
                 ax=0,
                 ay=-40
             )
+    # plotting a vertical line when there is a change in solution
+    solution = data['Solution']
+    for i in range(len(solution)):
+        # excluding the first value
+        if i == 0:
+            continue
+        if solution[i] != solution[i - 1]:
+            condition = True
+        else:
+            condition = False
+
+        if condition == True:
+            fig3.add_vline(x=time[i], line_width=3, line_dash="dash", line_color="orange")
+            fig3.add_annotation(
+                x=time[i],
+                y=volts[i],
+                text="Solution: " + str(solution[i]),
+                showarrow=True,
+                arrowhead=1,
+                ax=0,
+                ay=-200
+            )
+    #adding a legend to the plot
+    fig3.update_layout(legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="right",
+        x=0.01
+    ))
+    #adding the orange and green lines to the legend
+    fig3.add_trace(go.Scatter(
+        x=[None],
+        y=[None],
+        mode='lines',
+        line=dict(color='green', width=3),
+        name='Voltage Change'
+    ))
+    fig3.add_trace(go.Scatter(
+        x=[None],
+        y=[None],
+        mode='lines',
+        line=dict(color='orange', width=3),
+        name='Solution Change'
+    ))
 
     fig3.show()
 
@@ -251,3 +384,5 @@ def V_vs_t():
 I_vs_t()
 V_vs_t()
 combo()
+
+
