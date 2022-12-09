@@ -15,6 +15,7 @@ class Test:
         self.solution = None
         self.pstat = Potentiostat(pstat_path)
         # self.pstat.set_volt_range('2V')
+        self.test_finished = False
 
     def open_valve(self, valve_number):
         self.current_open_valve = valve_number
@@ -227,11 +228,11 @@ async def collect_data(test: Test):
 
     creating_csv()
     while True:
-        try:
-            write_to_csv()
-            await asyncio.sleep(0.01) # Needs to be modified - defines how many measurements you take per second
-        except KeyboardInterrupt:
+        if test.test_finished:
             break
+
+        write_to_csv()
+        await asyncio.sleep(0.01)  # Needs to be modified - defines how many measurements you take per second
 
 
 async def run_test(test: Test):
@@ -241,6 +242,7 @@ async def run_test(test: Test):
         test.setting_voltage(0.0)
         await asyncio.sleep(2)
 
+    test.test_finished = True
 
 async def async_main(test):
     return await asyncio.gather(
@@ -248,13 +250,11 @@ async def async_main(test):
         asyncio.create_task(run_test(test))
     )
 
+
 if __name__ == '__main__':
     _test = Test('/dev/ttyACM6')  # Port address
 
     asyncio.run(async_main(_test))
 
-    # collect_data_thread = threading.Thread(target=lambda: collect_data(test), daemon=True)
-    # collect_data_thread.start()
-    #
-    # run_test(test)
+
 
