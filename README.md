@@ -14,6 +14,7 @@ All that is needed is to:
   
 # Current_data_analysis.py
 Script should run fine as long as the current_data.csv file is in the same folder. if not copy it across or change the file location address
+Similar to Pymca you can zoom in on sections of the graph and adjust view using the icons in the top right
 
 ![image](https://user-images.githubusercontent.com/115980966/206751684-d760d272-6d0f-453a-b280-cc90e7678bba.png)
 ![image](https://user-images.githubusercontent.com/115980966/206751718-db0508fd-f229-4241-8664-d00197cb0031.png)
