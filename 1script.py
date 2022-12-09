@@ -5,9 +5,10 @@ import time
 import csv
 import threading
 import datetime
+import asyncio
 
 
-class Test():
+class Test:
     def __init__(self, pstat_path):
         self.pstat_path = pstat_path
         self.current_open_valve = 3
@@ -67,9 +68,9 @@ class Test():
 
     def load(self, valve_number, time_valve_open, time_till_next_action):
         self.open_valve(valve_number)
-        time.sleep(time_valve_open)
+        await asyncio.sleep(time_valve_open)
         self.close_valve(valve_number)
-        time.sleep(time_till_next_action)
+        await asyncio.sleep(time_till_next_action)
 
     def get_current_valve(self):
         return self.current_open_valve
@@ -201,7 +202,7 @@ class Test():
                     outfile.write(infile.read())
 
 
-def collect_data(test: Test):
+async def collect_data(test: Test):
     def get_curr():
         current = test.read_current()
         curr = str(current)
@@ -228,22 +229,32 @@ def collect_data(test: Test):
     while True:
         try:
             write_to_csv()
-            time.sleep(0.1)  # Needs to be modified - defines how many measurements you take per second
+            await asyncio.sleep(0.01) # Needs to be modified - defines how many measurements you take per second
         except KeyboardInterrupt:
             break
 
 
-def run_test(test: Test):
+async def run_test(test: Test):
     """Run a test on the potentiostat"""
     for i in range(1):
         test.load(4, 1, 1)
         test.setting_voltage(0.0)
-        time.sleep(2)
+        await asyncio.sleep(2)
 
+
+async def async_main(test):
+    return await asyncio.gather(
+        asyncio.create_task(collect_data(test)),
+        asyncio.create_task(run_test(test))
+    )
 
 if __name__ == '__main__':
-    test = Test('/dev/ttyACM6')  # Port address
-    collect_data_thread = threading.Thread(target=lambda: collect_data(test), daemon=True)
-    collect_data_thread.start()
+    _test = Test('/dev/ttyACM6')  # Port address
 
-    run_test(test)
+    asyncio.run(async_main(_test))
+
+    # collect_data_thread = threading.Thread(target=lambda: collect_data(test), daemon=True)
+    # collect_data_thread.start()
+    #
+    # run_test(test)
+
