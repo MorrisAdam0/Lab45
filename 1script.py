@@ -13,10 +13,7 @@ class Test():
         self.current_open_valve = 3
         self.solution = None
         self.pstat = Potentiostat(pstat_path)
-        #self.pstat.set_volt_range('2V')
-        
-    
-        
+        # self.pstat.set_volt_range('2V')
 
     def open_valve(self, valve_number):
         self.current_open_valve = valve_number
@@ -89,12 +86,12 @@ class Test():
         current = self.pstat.get_curr()
         sys.stdout.write(str(current) + '\n')
         return current
-        
+
     def read_voltage(self):
         voltage = self.pstat.get_volt()
         sys.stdout.write(str(voltage) + '\n')
         return voltage
-        
+
     def setting_voltage(self, voltage):
         self.pstat.set_volt(voltage)
         sys.stdout.write(str(voltage) + '\n')
@@ -134,12 +131,12 @@ class Test():
 
             # Create potentiostat object and set current range, sample rate and test parameters
 
-            pstat.set_curr_range(curr_range)
-            pstat.set_sample_rate(sample_rate)
-            pstat.set_param(test_name, test_param)
+            self.pstat.set_curr_range(curr_range)
+            self.pstat.set_sample_rate(sample_rate)
+            self.pstat.set_param(test_name, test_param)
 
             # Run cyclic voltammetry test
-            t, volt, curr = pstat.run_test(test_name, display='pbar', filename=datafile)
+            t, volt, curr = self.pstat.run_test(test_name, display='pbar', filename=datafile)
 
             os.system('cp 20221209.dat scratch.dat')
             filenames = ['scratch.dat', 'data.txt']
@@ -202,28 +199,29 @@ class Test():
                     outfile.write("#N     3 \n")
                     outfile.write("#L  Eapp/V     E/V     I/uA \n")
                     outfile.write(infile.read())
-                    
+
+
 def collect_data(test: Test):
     def get_curr():
         current = test.read_current()
-        curr = str(curr)
+        curr = str(current)
         return curr
-        
+
     def get_volt():
         voltage = test.read_voltage()
-        volt = str(volt)
+        volt = str(voltage)
         return volt
-    
+
     def creating_csv():
         with open('/home/i07lab45/Desktop/EC_howto/current_data.csv', mode='w') as current_data_csv:
             current_write = csv.writer(current_data_csv, delimiter=',')
             current_write.writerow(['Time (H:M:S:mS)', 'Voltage (V)', 'Current (I/uA)', 'Solution'])
 
-
     def write_to_csv():
         with open('/home/i07lab45/Desktop/EC_howto/current_data.csv', mode='a') as current_data:
             current_write = csv.writer(current_data, delimiter=',')
-            write_to_log = current_write.writerow([test.get_current_time(), test.read_voltage(), test.read_current(), test.get_current_solution()])
+            write_to_log = current_write.writerow(
+                [test.get_current_time(), test.read_voltage(), test.read_current(), test.get_current_solution()])
             return write_to_log
 
     creating_csv()
@@ -233,19 +231,19 @@ def collect_data(test: Test):
             time.sleep(0.1)  # Needs to be modified - defines how many measurements you take per second
         except KeyboardInterrupt:
             break
-            
-            
+
+
 def run_test(test: Test):
     """Run a test on the potentiostat"""
     for i in range(1):
-        test.load(4,1,1)
+        test.load(4, 1, 1)
         test.setting_voltage(0.0)
         time.sleep(2)
 
-if __name__ == '__main__':
-    test = Test('/dev/ttyACM6')   #Port address
-    collect_data_thread = threading.Thread(target = lambda: collect_data(test), daemon = True)
-    collect_data_thread.start()
 
+if __name__ == '__main__':
+    test = Test('/dev/ttyACM6')  # Port address
+    collect_data_thread = threading.Thread(target=lambda: collect_data(test), daemon=True)
+    collect_data_thread.start()
 
     run_test(test)
