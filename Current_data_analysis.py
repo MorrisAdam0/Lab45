@@ -1,8 +1,9 @@
 import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
+import plotly.io as pio
 
-data = pd.read_csv('current_data.csv') #Change the file name accordingly
+data = pd.read_csv('100_CYCLE_current_data.csv')
 
 #adding column names to the data
 data.columns = ['Time (H:M:S:mS)', 'Voltage (V)', 'Current (I/uA)', 'Solution']
@@ -147,7 +148,7 @@ def I_vs_t():
     fig2.add_trace(go.Scatter(
         x=time,
         y=current,
-        mode='lines+markers',
+        mode='lines',
         name='Current (uA) vs Time (s)',
         line=dict(color='black', width=2)
     )
@@ -209,8 +210,10 @@ def I_vs_t():
                 text="Voltage: " + str(volts[i]) + "V",
                 showarrow=True,
                 arrowhead=1,
+                textangle=90,
+                hovertext="Voltage: " + str(volts[i]) + "V",
                 ax=0,
-                ay=-40
+                ay=40
             )
 
     # plotting a vertical line when there is a change in solution
@@ -232,8 +235,10 @@ def I_vs_t():
                 text="Solution: " + str(solution[i]),
                 showarrow=True,
                 arrowhead=1,
+                textangle=90,
+                hovertext="Solution: " + str(solution[i]),
                 ax=0,
-                ay=-200
+                ay=100
             )
     # adding a legend to the plot
     fig2.update_layout(legend=dict(
@@ -259,6 +264,7 @@ def I_vs_t():
     ))
     fig2.show()
 
+    pio.write_image(fig2, 'Current vs Time 3.png', width=4000, height=2000, scale=5)
 
 def V_vs_t():
     fig3 = go.Figure()
@@ -382,7 +388,8 @@ def V_vs_t():
 
 
 I_vs_t()
-V_vs_t()
-combo()
+#V_vs_t()
+#combo()
+
 
 
