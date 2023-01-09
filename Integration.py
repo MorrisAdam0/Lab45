@@ -2,17 +2,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
 import numpy as np
 from scipy.integrate import quad
 
 
-data = pd.read_csv('Cd_strip_4_eald.csv')
+data = pd.read_csv('S_strip_4_eald.csv')
 #adding column names to the data
 data.columns = ['Voltage (V)', 'Current (I/uA)']
 current = data['Current (I/uA)']
 volts = data['Voltage (V)']
 print(data.head())
-poly = PolynomialFeatures(degree=15)
+
+poly = PolynomialFeatures(degree=44)
 X = poly.fit_transform(volts[:, np.newaxis])
 
 model = LinearRegression()
@@ -22,6 +24,7 @@ y_pred = model.predict(X)
 
 plt.plot(volts, current, 'b.')
 plt.plot(volts, y_pred, 'r')
+plt.show()
 
 value = float(input('Enter an x-coordinate: '))
 value_2 = float(input('Enter an x-coordinate: '))
@@ -42,7 +45,7 @@ x = [value_2, value]
 y = [m * xi + b for xi in x]
 
 plt.plot(x, y)
-plt.plot([x_0, x_1], [y_0, y_1], 'ro')
+plt.plot([x_0, x_1], [y_0, y_1], 'rx')
 
 
 #calculate the area
@@ -54,5 +57,6 @@ num_elec = charge_C / 1.602E-19
 
 
 print(f'The charge (C) is {charge_C} and \n the number of electrons involved is {num_elec}')
+#plt.savefig('Cd_strip_4_eald_region.png')
 plt.show()
 
