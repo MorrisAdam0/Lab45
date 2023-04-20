@@ -1,8 +1,7 @@
 # Lab45
 
 The following is a record of the current Python scripts for running tests and analysing data from lab45.
-Updated 09/12/22
-
+Updated 20/04/23
 # 2script.py
 This is the test procedure script
 
@@ -12,7 +11,7 @@ All that is needed is to:
   - Change the name of the csv file recording [Time, Current, Voltage, Solution]
   
   
-# Current_data_analysis.py
+# Current_data_analysis_updated.py
 Script should run fine as long as the current_data.csv file is in the same folder. if not copy it across or change the file location address
 Similar to Pymca you can zoom in on sections of the graph and adjust view using the icons in the top right
 
