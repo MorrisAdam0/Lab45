@@ -20,3 +20,14 @@ Similar to Pymca you can zoom in on sections of the graph and adjust view using 
 ![image](https://user-images.githubusercontent.com/115980966/206751733-87b7c14e-5796-4ef8-bc71-86eaa81102b0.png)
 
 
+# Stripping_curve_integration.py
+Steps for the calculation:
+1. Change the filename to the directory location of the experimental test csv file.
+2. Run the Script
+3. From the graph that will load in the browser, enter the two x-coordinates for the line of best fit that defines the region you want to calculate
+4. Calculation will proceed
+5. Results will be inserted into the Electrochemical_stripping_data.csv file
+
+![image](https://user-images.githubusercontent.com/115980966/235660593-dd57fa38-8922-4e02-8ac6-5483cda9de36.png)
+![image](https://user-images.githubusercontent.com/115980966/235660819-e1eee024-5062-4268-889f-234bca8c62aa.png)
+![image](https://user-images.githubusercontent.com/115980966/235661166-3cd32923-a1d2-40ce-8bf4-4082907f157d.png)
