@@ -31,3 +31,17 @@ Steps for the calculation:
 ![image](https://user-images.githubusercontent.com/115980966/235660593-dd57fa38-8922-4e02-8ac6-5483cda9de36.png)
 ![image](https://user-images.githubusercontent.com/115980966/235660819-e1eee024-5062-4268-889f-234bca8c62aa.png)
 ![image](https://user-images.githubusercontent.com/115980966/235661166-3cd32923-a1d2-40ce-8bf4-4082907f157d.png)
+
+
+# Potentiostat GUI
+Features:
+- Toggle Electrode Status (ON and OFF)
+- Select Current and Voltage Ranges
+- Toggle the appearance of the GUI
+- Write a script using buttons to insert commands with parameters inputed by the user
+- Save the script, such that the file 2script.py can then be run, resulting in all data colelction occcuring as expected
+- Can toggle a specific valve for a specific time via the 'Custom Valve Openeing' button
+- Can manually toggle each valve ON and OFF
+
+
+![image](https://github.com/MorrisAdam0/Lab45/assets/115980966/e0925a37-8b4b-48bf-b2e1-b682e169aa78)
