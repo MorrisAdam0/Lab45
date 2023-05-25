@@ -9,6 +9,7 @@ import subprocess
 import os
 import customtkinter as ctk
 from tkinter import messagebox
+from PIL import Image
 
 ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -45,11 +46,10 @@ class Dashboard(ctk.CTk):
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky='nsew')
         self.sidebar_frame.grid_rowconfigure(3, weight=1)
 
-        self.logo_label = ctk.CTkLabel(self.sidebar_frame, text='Potentiostat GUI', font=ctk.CTkFont(size=20, weight='bold'))
+        self.logo_label = ctk.CTkLabel(self.sidebar_frame, text='Potentiostat GUI', font=ctk.CTkFont(size=20, weight='bold', underline=True))
         self.logo_label.grid(row=0, column=0, padx=20, pady=10)
         self.logo_label = ctk.CTkLabel(self.sidebar_frame, text='Author: Adam Morris',font=ctk.CTkFont(size=10, weight='bold'))
         self.logo_label.grid(row=0, column=1, padx=20, pady=10)
-
 
         self.status_label = ctk.CTkLabel(self.sidebar_frame, text='Status: OFF', anchor='w', text_color='black', fg_color='red', corner_radius=10)
         self.status_label.grid(row=1, column=0, padx=20, pady=(10, 0))
@@ -58,9 +58,10 @@ class Dashboard(ctk.CTk):
         #self.test.pstat.set_volt(-1)
 
 
+
         self.sidebar_button_1 = ctk.CTkButton(self.sidebar_frame, text='Turn ON Potentiostat', command=self.turn_on_pstat)
         self.sidebar_button_1.grid(row=2, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = ctk.CTkButton(self.sidebar_frame, text='Turn OFF Potentiostat',command=self.turn_off_pstat)
+        self.sidebar_button_2 = ctk.CTkButton(self.sidebar_frame, text='Turn OFF Potentiostat', command=self.turn_off_pstat)
         self.sidebar_button_2.grid(row=2, column=1, padx=20, pady=10)
 
         combox_var_1 = ctk.StringVar(value="Current Range")
@@ -87,7 +88,7 @@ class Dashboard(ctk.CTk):
         self.text_frame.grid(row=0, column=1, padx=(20,20), pady=(20,0), sticky='nsew')
 
         self.logo_label = ctk.CTkLabel(self.text_frame, text='Script',
-                                        font=ctk.CTkFont(size=20, weight='bold'))
+                                        font=ctk.CTkFont(size=20, weight='bold', underline=True))
         self.logo_label.grid(row=0, column=0, padx=20, pady=10)
 
         self.textbox = ctk.CTkTextbox(self.text_frame, width=400, height=400, corner_radius=10, text_color='white')
@@ -311,6 +312,88 @@ class Dashboard(ctk.CTk):
         save_button = ctk.CTkButton(self.text_frame, text="Save Script", command=save_script)
         save_button.grid(row=5, column=0, padx=20, pady=10)
 
+        #===========
+        #Run
+        #===========
+
+        run_button = ctk.CTkButton(self.text_frame, text="Run Script", command=self.run_script)
+        run_button.grid(row=5, column=1, padx=20, pady=10)
+
+        #===========
+        # Terminal and Control Buttons
+        #===========
+
+        # creating a label for the terminal
+        self.terminal_label = ctk.CTkLabel(self.text_frame, text="Terminal", font=ctk.CTkFont(size=20, weight='bold', underline=True))
+        self.terminal_label.grid(row=6, column=0, padx=20, pady=10)
+
+        # creating a text widget for the terminal
+        self.terminal = ctk.CTkTextbox(self.text_frame,  width=400, height=100, corner_radius=10, text_color='white')
+        self.terminal.grid(row=7, column=0, padx=20, pady=10)
+
+
+
+        def input_window_setting_voltage():
+            input_window = ctk.CTkToplevel(self)
+            input_window.transient(self)
+            input_window.title("Setting Voltage")
+
+            # Function to handle the 'ok' button click
+            def handle_ok():
+                voltage = voltage_entry.get()
+
+                # Display the sentenc ein the text widget
+                self.terminal.insert("end", f"\n>> pstat.set_volt({voltage})")
+
+
+                command = "print('hello world')"
+                output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+                output_string = output_bytes.decode('utf-8').strip()
+                self.terminal.insert("end-1c", f"\n{output_string}")
+                self.terminal.see("end-1c")
+
+                input_window.destroy()
+
+            voltage_label = ctk.CTkLabel(input_window, text="Enter Start Voltage:")
+            voltage_label.grid(row=0, column=0, padx=20, pady=10)
+            voltage_entry = ctk.CTkEntry(input_window)
+            voltage_entry.grid(row=1, column=0, padx=20, pady=10)
+
+            ok_button = ctk.CTkButton(input_window, text="OK", command=handle_ok)
+            ok_button.grid(row=4, column=0, padx=20, pady=10)
+
+        # creating a button to set the voltage
+        self.set_voltage_button = ctk.CTkButton(self.text_frame, text="Set Voltage", command=input_window_setting_voltage)
+        self.set_voltage_button.grid(row=8, column=0, padx=20, pady=10)
+
+        # creating a button to get the voltage
+        self.get_voltage_button = ctk.CTkButton(self.text_frame, text="Get Voltage", command=self.getting_volt)
+        self.get_voltage_button.grid(row=9, column=0, padx=20, pady=10)
+
+        # creating a button to get the current
+        self.get_current_button = ctk.CTkButton(self.text_frame, text="Get Current", command=self.getting_curr)
+        self.get_current_button.grid(row=10, column=0, padx=20, pady=10)
+
+        # creating a button to get the voltage range
+        self.get_current_button = ctk.CTkButton(self.text_frame, text="Get Voltage Range", command=self.getting_volt_range)
+        self.get_current_button.grid(row=9, column=1, padx=20, pady=10)
+
+        # creating a button to get the current range
+        self.get_current_button = ctk.CTkButton(self.text_frame, text="Get Current Range", command=self.getting_curr_range)
+        self.get_current_button.grid(row=10, column=1, padx=20, pady=10)
+
+        # creating a button to get the auto connect off
+        self.get_current_button = ctk.CTkButton(self.text_frame, text="Turn Auto Connect OFF", command=self.turn_auto_connect_off)
+        self.get_current_button.grid(row=8, column=2, padx=20, pady=10)
+
+        # creating a button to get the electrodes off
+        self.get_current_button = ctk.CTkButton(self.text_frame, text="Turn Elec OFF", command=self.turn_electrodes_off)
+        self.get_current_button.grid(row=9, column=2, padx=20, pady=10)
+
+        # creating a button to get the electrodes on
+        self.get_current_button = ctk.CTkButton(self.text_frame, text="Turn Elec ON",command=self.turn_electrodes_on)
+        self.get_current_button.grid(row=10, column=2, padx=20, pady=10)
+
 
 
         #============================================================================================
@@ -323,7 +406,7 @@ class Dashboard(ctk.CTk):
         self.valve_frame.grid(row=0, column=3, padx=(20,20), pady=(20,0), sticky='nsew')
 
         self.logo_label = ctk.CTkLabel(self.valve_frame, text='Valve Control',
-                                       font=ctk.CTkFont(size=20, weight='bold'))
+                                       font=ctk.CTkFont(size=20, weight='bold', underline=True))
         self.logo_label.grid(row=0, column=0, padx=20, pady=10)
 
 
@@ -340,11 +423,20 @@ class Dashboard(ctk.CTk):
             # Function to handle the 'ok' button click
             def handle_ok():
                 valve_number = valve_number_entry.get()
-                time = time_entry.get()
+                time_duration = time_entry.get()
+                command_open = f'usbrelay QMBS_{valve_number}=1'
+                command_close = f'usbrelay QMBS_{valve_number}=0'
 
 
-                valve_status_label.configure(text=f"Valve {valve_number} is open for {time} seconds", bg_color='green', text_color='black')
+                # os.system(command_open)
 
+                # Display the sentenc ein the text widget
+                self.terminal.insert("end", f"\n>> valve {valve_number} open for {time_duration} seconds")
+                self.terminal.see("end-1c")
+                time.sleep(int(time_duration))
+
+
+                # os.system(command_close)
                 input_window.destroy()
 
             #create a label for the valve number
@@ -362,15 +454,13 @@ class Dashboard(ctk.CTk):
             ok_button.grid(row=4, column=0, padx=20, pady=10)
 
         # Creating a valve status label
-        valve_status_label = ctk.CTkLabel(self.valve_frame, text="Valve Status", bg_color='red', text_color='black')
-        valve_status_label.grid(row=2, column=0, padx=20, pady=10)
         custom_valve_opening_label = ctk.CTkButton(self.valve_frame, text="Custom Valve Opening", command=input_window_valve)
-        custom_valve_opening_label.grid(row=3, column=0, padx=20, pady=10)
+        custom_valve_opening_label.grid(row=2, column=0, padx=20, pady=10)
 
 
 
         self.logo_label = ctk.CTkLabel(self.valve_frame, text='Manual Valve Control',
-                                       font=ctk.CTkFont(size=15, weight='bold'))
+                                       font=ctk.CTkFont(size=15, weight='bold', underline=True))
         self.logo_label.grid(row=4, column=0, padx=20, pady=10)
 
         self.valve_labels = []
@@ -398,9 +488,13 @@ class Dashboard(ctk.CTk):
             valve_close_button.grid(row=5 + valve_num, column=2, padx=20, pady=10)
             self.valve_close_buttons.append(valve_close_button)
 
-
-
-
+        # Diamond Logo
+        '''
+        image = os.path.realpath('dls_logo.png')
+        self.logo_image = ctk.CTkImage(Image.open(image))
+        self.logo_label = ctk.CTkLabel(self.valve_frame, text="", image=self.logo_image)
+        self.logo_label.grid(row=15, column=0, padx=20, pady=10)
+        '''
 
 
 
@@ -415,19 +509,48 @@ class Dashboard(ctk.CTk):
 
     def turn_on_pstat(self):
         self.status_label.configure(text='Status: ON', fg_color='green')
-        print('Potentiostat turned on')
+        # self.test.pstat.set_all_elec_connected(True)
+        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(True)")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
 
     def turn_off_pstat(self):
         self.status_label.configure(text='Status: OFF', fg_color='red')
-        print('Potentiostat turned off')
+        # self.test.pstat.set_all_elec_connected(False)
+
+        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(False)")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
 
     def set_current_range(self, value):
         # self.test.pstat.set_curr_range(value)
-        print("current range: " + value)
+
+        self.terminal.insert("end", f"\n>> pstat.set_curr_range({value})")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
 
     def set_voltage_range(self, value):
         # self.test.pstat.set_volt_range(value)
-        print("voltage range: " + value)
+
+        self.terminal.insert("end", f"\n>> pstat.set_volt_range({value})")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
 
     def create_open_function(self, valve_num):
         def valve_open():
@@ -464,6 +587,79 @@ class Dashboard(ctk.CTk):
             elapsed_time = time.time() - self.start_time
             self.stopwatch_label.configure(text=self.format_time(elapsed_time))
             self.after(1000, self.update_stopwatch)
+
+    def getting_volt(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.get_volt()")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+    def getting_curr(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.get_curr()")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+    def getting_curr_range(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.get_curr_range()")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+    def getting_volt_range(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.get_volt_range()")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+
+    def turn_auto_connect_off(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.set_auto_connect(False)")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+
+    def turn_electrodes_off(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(False)")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+
+    def turn_electrodes_on(self):
+        # Display the sentence in the text widget
+        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(True)")
+
+        command = "print('hello world')"
+        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
+        output_string = output_bytes.decode('utf-8').strip()
+        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.see("end-1c")
+
+    def run_script(self):
+        script_path = '/path/of/yhe/script.py'
+        subprocess.Popen(['x-terminal-emulator', '-e', 'python3', script_path])
+        self.terminal.insert("end-1c", f"\n>> python3 {script_path}")
+        self.terminal.see("end-1c")
 
 if __name__ == "__main__":
     app = Dashboard()
