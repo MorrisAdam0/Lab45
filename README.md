@@ -43,7 +43,7 @@ Features:
 - Run the script
 - Can toggle a specific valve for a specific time via the 'Custom Valve Openeing' button
 - Can manually toggle each valve ON and OFF, with a timer displaying the count of tme from the onset of the Open button
-- The user can manually <Set the Voltage>, <Get Current>, <Get voltage>, <Get Current Range>, <Get Voltage Range>, <Turn Electrode Auto Connect OFF>, <Turn Electrodes OFF>, <Turn Electrodes ON>
+- The user can manually Set the Voltage, Get Current, Get voltage, Get Current Range, Get Voltage Range, Turn Electrode Auto Connect OFF, Turn Electrodes OFF, Turn Electrodes ON
 - All ouputs of user entries are shown in the terminal
 
 
