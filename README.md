@@ -40,8 +40,12 @@ Features:
 - Toggle the appearance of the GUI
 - Write a script using buttons to insert commands with parameters inputed by the user
 - Save the script, such that the file 2script.py can then be run, resulting in all data colelction occcuring as expected
+- Run the script
 - Can toggle a specific valve for a specific time via the 'Custom Valve Openeing' button
-- Can manually toggle each valve ON and OFF
+- Can manually toggle each valve ON and OFF, with a timer displaying the count of tme from the onset of the Open button
+- The user can manually <Set the Voltage>, <Get Current>, <Get voltage>, <Get Current Range>, <Get Voltage Range>, <Turn Electrode Auto Connect OFF>, <Turn Electrodes OFF>, <Turn Electrodes ON>
+- All ouputs of user entries are shown in the terminal
 
 
-![image](https://github.com/MorrisAdam0/Lab45/assets/115980966/e0925a37-8b4b-48bf-b2e1-b682e169aa78)
+![image](https://github.com/MorrisAdam0/Lab45/assets/115980966/6fa156d1-f453-4298-8a67-1367d360e645)
+
