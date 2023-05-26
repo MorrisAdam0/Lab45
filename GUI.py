@@ -14,23 +14,21 @@ from PIL import Image
 ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
-class Test:
-    def __init__(self, pstat_path):
-        self.pstat_path = pstat_path
-        self.current_open_valve = 3
-        self.solution = None
-        self.pstat = Potentiostat(pstat_path)
+        
+        
+class Dashboard(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        
+        
+        self.pstat_path = '/dev/ttyACM13'
+        
+        
+        self.pstat = Potentiostat(self.pstat_path)
         # self.pstat.set_volt_range('2V')
         self.test_finished = False
 
         self.pstat.set_auto_connect(False)
-
-
-class Dashboard(ctk.CTk):
-    def __init__(self):
-        super().__init__()
-        #self.test = Test('COM3')
-
         self.title('Potentiostat GUI')
         self.geometry('800x600')
 
@@ -53,9 +51,9 @@ class Dashboard(ctk.CTk):
 
         self.status_label = ctk.CTkLabel(self.sidebar_frame, text='Status: OFF', anchor='w', text_color='black', fg_color='red', corner_radius=10)
         self.status_label.grid(row=1, column=0, padx=20, pady=(10, 0))
-        #self.test.pstat.set_auto_connect(False)
-        #self.test.pstat.set_all_elect_connected(False)
-        #self.test.pstat.set_volt(-1)
+        self.pstat.set_auto_connect(False)
+        self.pstat.set_all_elect_connected(False)
+        self.pstat.set_volt(-1)
 
 
 
@@ -345,11 +343,9 @@ class Dashboard(ctk.CTk):
                 # Display the sentenc ein the text widget
                 self.terminal.insert("end", f"\n>> pstat.set_volt({voltage})")
 
-
-                command = "print('hello world')"
-                output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-                output_string = output_bytes.decode('utf-8').strip()
-                self.terminal.insert("end-1c", f"\n{output_string}")
+                
+                command = self.pstat.set_volt(float(voltage))
+                self.terminal.insert('end', f'\n{command}')
                 self.terminal.see("end-1c")
 
                 input_window.destroy()
@@ -424,11 +420,11 @@ class Dashboard(ctk.CTk):
             def handle_ok():
                 valve_number = valve_number_entry.get()
                 time_duration = time_entry.get()
-                command_open = f'usbrelay QMBS_{valve_number}=1'
-                command_close = f'usbrelay QMBS_{valve_number}=0'
+                command_open = f'usbrelay 6QMBS_{valve_number}=1'
+                command_close = f'usbrelay 6QMBS_{valve_number}=0'
 
-
-                # os.system(command_open)
+                #os.system(f'usbrelay 6QMBS_{valve_num}=1')
+                os.system(command_open)
 
                 # Display the sentenc ein the text widget
                 self.terminal.insert("end", f"\n>> valve {valve_number} open for {time_duration} seconds")
@@ -436,7 +432,7 @@ class Dashboard(ctk.CTk):
                 time.sleep(int(time_duration))
 
 
-                # os.system(command_close)
+                os.system(command_close)
                 input_window.destroy()
 
             #create a label for the valve number
@@ -509,52 +505,43 @@ class Dashboard(ctk.CTk):
 
     def turn_on_pstat(self):
         self.status_label.configure(text='Status: ON', fg_color='green')
-        # self.test.pstat.set_all_elec_connected(True)
-        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(True)")
-
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        
+        command = self.pstat.set_all_elect_connected(True)
+        
+        self.terminal.insert("end", f"\n>> pstat.set_all_elect_connected(True)")
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
+       
 
     def turn_off_pstat(self):
         self.status_label.configure(text='Status: OFF', fg_color='red')
-        # self.test.pstat.set_all_elec_connected(False)
+        
+        command = self.pstat.set_all_elect_connected(False)
 
-        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(False)")
-
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.insert("end", f"\n>> pstat.set_all_elect_connected(False)")
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
+        
 
     def set_current_range(self, value):
-        # self.test.pstat.set_curr_range(value)
-
+        command = self.pstat.set_curr_range(value)
+        
         self.terminal.insert("end", f"\n>> pstat.set_curr_range({value})")
-
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
+        
 
     def set_voltage_range(self, value):
-        # self.test.pstat.set_volt_range(value)
+        command = self.pstat.set_volt_range(value)
 
         self.terminal.insert("end", f"\n>> pstat.set_volt_range({value})")
-
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
+        
 
     def create_open_function(self, valve_num):
         def valve_open():
-            # os.system('usbrelay 6QMBS_1=1')
+            os.system(f'usbrelay 6QMBS_{valve_num}=1')
             if not self.running:
                 self.start_time = time.time()
                 self.running = True
@@ -566,7 +553,7 @@ class Dashboard(ctk.CTk):
 
     def create_close_function(self, valve_num):
         def valve_close():
-            # os.system('usbrelay 6QMBS_1=0')
+            os.system(f'usbrelay 6QMBS_{valve_num}=0')
             if self.running:
                 elapsed_time = time.time() - self.start_time
                 self.running = False
@@ -591,72 +578,59 @@ class Dashboard(ctk.CTk):
     def getting_volt(self):
         # Display the sentence in the text widget
         self.terminal.insert("end", f"\n>> pstat.get_volt()")
-
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        volt =self.pstat.get_volt()
+        self.terminal.insert('end', f'\n{volt}')
         self.terminal.see("end-1c")
+        
     def getting_curr(self):
         # Display the sentence in the text widget
         self.terminal.insert("end", f"\n>> pstat.get_curr()")
-
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        curr = self.pstat.get_curr()
+        self.terminal.insert('end', f'\n{curr}')
         self.terminal.see("end-1c")
+        
     def getting_curr_range(self):
         # Display the sentence in the text widget
         self.terminal.insert("end", f"\n>> pstat.get_curr_range()")
 
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        command = self.pstat.get_curr_range()
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
+        
     def getting_volt_range(self):
         # Display the sentence in the text widget
         self.terminal.insert("end", f"\n>> pstat.get_volt_range()")
 
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        command = self.pstat.get_volt_range()
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
-
+        
     def turn_auto_connect_off(self):
         # Display the sentence in the text widget
         self.terminal.insert("end", f"\n>> pstat.set_auto_connect(False)")
 
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        command = self.pstat.set_auto_connect(False)
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
-
+        
     def turn_electrodes_off(self):
         # Display the sentence in the text widget
-        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(False)")
+        self.terminal.insert("end", f"\n>> pstat.set_all_elect_connected(False)")
 
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        command = self.pstat.set_all_elect_connected(False)
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
-
+        
     def turn_electrodes_on(self):
         # Display the sentence in the text widget
-        self.terminal.insert("end", f"\n>> pstat.set_all_elec_connected(True)")
+        self.terminal.insert("end", f"\n>> pstat.set_all_elect_connected(True)")
 
-        command = "print('hello world')"
-        output_bytes = subprocess.check_output(['python', '-c', command], shell=True)
-        output_string = output_bytes.decode('utf-8').strip()
-        self.terminal.insert("end-1c", f"\n{output_string}")
+        command = self.pstat.set_all_elect_connected(True)
+        self.terminal.insert('end', f'\n{command}')
         self.terminal.see("end-1c")
-
+        
     def run_script(self):
-        script_path = '/path/of/yhe/script.py'
+        script_path = '/home/i07lab45/Desktop/EC_howto/2script.py'
         subprocess.Popen(['x-terminal-emulator', '-e', 'python3', script_path])
         self.terminal.insert("end-1c", f"\n>> python3 {script_path}")
         self.terminal.see("end-1c")
